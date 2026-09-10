@@ -23,6 +23,7 @@ try {
 
 $InstallDir = Join-Path $env:ProgramData "tooler"
 $ExePath    = Join-Path $InstallDir "tooler.exe"
+$Ps1Path    = Join-Path $InstallDir "tooler.ps1"
 $IcoPath    = Join-Path $InstallDir "Tooler.ico"
 
 Write-Host ""
@@ -40,23 +41,39 @@ if (-not (Test-Path $InstallDir)) {
 Get-Process | Where-Object { $_.Name -like "*tooler*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 1
 
-# Download tooler.exe
-$localExe = if ($PSScriptRoot) { Join-Path $PSScriptRoot "binary\tooler.exe" } else { $null }
+# Download / Copy tooler.exe
+$localExe = if ($PSScriptRoot) { Join-Path $PSScriptRoot "cs-binary\tooler.exe" } else { $null }
+if (-not $localExe -or -not (Test-Path $localExe)) {
+    $localExe = if ($PSScriptRoot) { Join-Path $PSScriptRoot "cpp-binary\tooler.exe" } else { $null }
+}
 if ($localExe -and (Test-Path $localExe)) {
     Write-Host "Installing local tooler.exe..." -ForegroundColor Cyan
     Copy-Item $localExe $ExePath -Force
 } else {
     Write-Host "Downloading tooler.exe from repository..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/binary/tooler.exe?v=$(Get-Random)" -OutFile $ExePath -UseBasicParsing
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe?v=$(Get-Random)" -OutFile $ExePath -UseBasicParsing
 }
 
-# Download Tooler.ico
-$localIco = if ($PSScriptRoot) { Join-Path $PSScriptRoot "Setup\Tooler.ico" } else { $null }
+# Download / Copy tooler.ps1 (for fast offline launch)
+$localPs1 = if ($PSScriptRoot) { Join-Path $PSScriptRoot "tooler.ps1" } else { $null }
+if ($localPs1 -and (Test-Path $localPs1)) {
+    Write-Host "Installing local tooler.ps1..." -ForegroundColor Cyan
+    Copy-Item $localPs1 $Ps1Path -Force
+} else {
+    Write-Host "Downloading tooler.ps1 from repository..." -ForegroundColor Cyan
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/tooler.ps1?v=$(Get-Random)" -OutFile $Ps1Path -UseBasicParsing
+}
+
+# Download / Copy Tooler.ico
+$localIco = if ($PSScriptRoot) { Join-Path $PSScriptRoot "cpp-binary\Tooler.ico" } else { $null }
+if (-not $localIco -or -not (Test-Path $localIco)) {
+    $localIco = if ($PSScriptRoot) { Join-Path $PSScriptRoot "cs-binary\Tooler.ico" } else { $null }
+}
 if ($localIco -and (Test-Path $localIco)) {
     Copy-Item $localIco $IcoPath -Force
 } else {
     Write-Host "Downloading Tooler.ico from repository..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/Setup/Tooler.ico?v=$(Get-Random)" -OutFile $IcoPath -UseBasicParsing
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/cpp-binary/Tooler.ico?v=$(Get-Random)" -OutFile $IcoPath -UseBasicParsing
 }
 
 # Add to SYSTEM and USER PATH

@@ -4,25 +4,46 @@ A modern Windows WPF GUI application wrapper for `tooler.ps1` to quickly install
 
 ## Quick Start
 
-### Run (PowerShell)
+### 🚀 Instant Run (PowerShell)
+Run directly without installing:
 ```powershell
 irm https://raw.githubusercontent.com/afnan-nex/tooler/main/run.ps1 | iex
 ```
 
-### Install CLI to PATH & Create Shortcuts (PowerShell)
+### 💻 Install `tooler.exe` to PATH & Desktop (Recommended)
+
+#### Option 1: One-Liner Installer (PowerShell)
+Installs `tooler.exe` locally, adds it to your system `PATH`, and creates Desktop and Start Menu shortcuts:
 ```powershell
 irm https://raw.githubusercontent.com/afnan-nex/tooler/main/install.ps1 | iex
 ```
 
+#### Option 2: Download `tooler.exe`
+Download and launch the standalone executable:
+
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.1-blue.svg?style=for-the-badge" alt="Version 2.1">
-  <a href="https://raw.githubusercontent.com/afnan-nex/tooler/refs/heads/main/Setup/Tooler.exe">
-    <img src="https://img.shields.io/badge/Download-Setup.exe-blue?style=for-the-badge&logo=windows" alt="Download Setup">
+  <img src="https://img.shields.io/badge/version-v2.3.0-blue.svg?style=for-the-badge" alt="Version 2.3.0">
+  <a href="https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe">
+    <img src="https://img.shields.io/badge/Download-tooler.exe-blue?style=for-the-badge&logo=windows" alt="Download tooler.exe">
   </a>
 </p>
 
+---
+
+## ⚡ CLI Usage
+
+Once installed, simply type **`tooler`** in any Command Prompt, PowerShell window, or the Windows Run dialog (`Win + R`):
+
+```cmd
+tooler             Launch local Tooler GUI (instant & offline)
+tooler --update    Download and update to the latest script from GitHub
+tooler --beta      Launch Tooler Beta GUI
+tooler --version   Show version number
+tooler --help      Show help and usage options
+```
+
 <details>
-  <summary>Other commands</summary>
+  <summary>Other launch commands</summary>
 
 ## **Run in CMD**
 ```cmd
@@ -37,12 +58,6 @@ curl -L -o "%TEMP%\tooler-beta.ps1" https://raw.githubusercontent.com/afnan-nex/
 ## **Run Beta in PowerShell**
 ```powershell
 $Beta = $true; irm https://raw.githubusercontent.com/afnan-nex/tooler/main/run.ps1 | iex
-```
-
-## **For Security Problem**
-Might I make it Permanent
-```cmd
-curl -L -o "%TEMP%\tooler.ps1" https://raw.githubusercontent.com/afnan-nex/tooler/main/tooler.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File "%TEMP%\tooler.ps1"
 ```
 
 ## **Curl Command**
@@ -61,9 +76,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "irm 'https://raw.githubu
 Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/afnan-nex/tooler/main/Other/tooler.cmd?$(Get-Date -Format yyyyMMddHHmmss)" -OutFile "$env:TEMP\tooler.cmd";
 Start-Process "$env:TEMP\tooler.cmd" -Verb RunAs
 ```
-
-## **Install via Setup Installer**
-Run the [Setup installer](https://raw.githubusercontent.com/afnan-nex/tooler/refs/heads/main/Setup/Tooler.exe), which automatically installs `tooler.exe` and adds it to your system `PATH`.
 </details>
 
 ---
