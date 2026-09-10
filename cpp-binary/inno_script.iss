@@ -35,7 +35,7 @@ Name: "addtopath"; Description: "Add Tooler to system PATH environment variable"
 
 [Files]
 Source: "{#MyAppIconName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\binary\tooler.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "tooler.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\tooler.exe"; IconFilename: "{app}\{#MyAppIconName}"

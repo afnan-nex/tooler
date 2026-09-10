@@ -471,9 +471,9 @@ public static extern IntPtr GetConsoleWindow();
     }
 
     function Run-Setup {
-        $setupCmd = ('echo Downloading Setup... && curl.exe -L --retry 3 --retry-delay 2 -o "%TEMP%\Tooler.exe" ' +
-            '"https://github.com/afnan-nex/tooler/raw/main/Setup/Tooler.exe" && ' +
-            'if exist "%TEMP%\Tooler.exe" ( "%TEMP%\Tooler.exe" ) ' +
+        $setupCmd = ('echo Downloading Setup... && curl.exe -L --retry 3 --retry-delay 2 -o "%TEMP%\tooler.exe" ' +
+            '"https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe" && ' +
+            'if exist "%TEMP%\tooler.exe" ( "%TEMP%\tooler.exe" ) ' +
             'else ( echo Download failed! ) && echo. && echo Press any key to exit . . . && pause >nul && exit')
         Start-Process cmd -WindowStyle Minimized -ArgumentList "/k", $setupCmd
     }
@@ -3437,7 +3437,7 @@ Read-Host "Press Enter to close"
     try {
         if (-not (Test-Path $iconPath)) {
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/Setup/Tooler.ico" -OutFile $iconPath -UseBasicParsing -TimeoutSec 3 -ErrorAction SilentlyContinue
+            Invoke-WebRequest -Uri "https://raw.githubusercontent.com/afnan-nex/tooler/main/cpp-binary/Tooler.ico" -OutFile $iconPath -UseBasicParsing -TimeoutSec 3 -ErrorAction SilentlyContinue
         }
         if (Test-Path $iconPath) {
             $script:window.Icon = New-Object System.Windows.Media.Imaging.BitmapImage(New-Object System.Uri($iconPath))

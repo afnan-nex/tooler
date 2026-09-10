@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 #  Tools Installer -> Tooler Migration & Updater
 #  by AFNAN (https://github.com/afnan-nex/tooler)
 # ============================================================
@@ -20,8 +20,8 @@ Write-Host "  Project repository has moved from 'tools-installer' to 'tooler'." 
 Write-Host "  Downloading and launching the new Tooler Setup..." -ForegroundColor Cyan
 Write-Host ""
 
-$setupUrl = "https://github.com/afnan-nex/tooler/raw/main/Setup/Tooler.exe"
-$tempSetup = Join-Path $env:TEMP "Tooler.exe"
+$setupUrl = "https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe"
+$tempSetup = Join-Path $env:TEMP "tooler.exe"
 
 # Kill old tools-installer processes if any
 Get-Process | Where-Object { $_.Name -like "*tools-installer*" } | Stop-Process -Force -ErrorAction SilentlyContinue

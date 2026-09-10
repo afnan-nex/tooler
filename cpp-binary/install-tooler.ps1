@@ -1,4 +1,4 @@
-﻿# Self-elevation to admin
+# Self-elevation to admin
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
     exit
@@ -7,7 +7,7 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 # Configuration
 $ToolDir = [Environment]::GetFolderPath('CommonApplicationData') + '\tooler'
 $ExePath = Join-Path $ToolDir 'tooler.exe'
-$DownloadUrl = 'https://raw.githubusercontent.com/afnan-nex/tooler/main/binary/tooler.exe'
+$DownloadUrl = 'https://raw.githubusercontent.com/afnan-nex/tooler/main/cpp-binary/tooler.exe'
 
 # Create directory
 [System.IO.Directory]::CreateDirectory($ToolDir) | Out-Null
@@ -22,9 +22,9 @@ Start-Sleep -Seconds 2
 if (Test-Path $ExePath) { Remove-Item $ExePath -Force -ErrorAction Stop }
 
 # Copy local binary if present in workspace/parent, otherwise download from GitHub
-$localBinary = Join-Path $PSScriptRoot "binary\tooler.exe"
+$localBinary = Join-Path $PSScriptRoot "tooler.exe"
 if (-not (Test-Path $localBinary)) {
-    $localBinary = Join-Path $PSScriptRoot "tooler.exe"
+    $localBinary = Join-Path $PSScriptRoot "..\cs-binary\tooler.exe"
 }
 
 if (Test-Path $localBinary) {
