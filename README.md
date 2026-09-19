@@ -22,7 +22,7 @@ irm https://raw.githubusercontent.com/afnan-nex/tooler/main/install.ps1 | iex
 Download and launch the standalone executable:
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-v2.3.0-blue.svg?style=for-the-badge" alt="Version 2.3.0">
+  <img src="https://img.shields.io/badge/version-v2.3.1-blue.svg?style=for-the-badge" alt="Version 2.3.1">
   <a href="https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe">
     <img src="https://img.shields.io/badge/Download-tooler.exe-blue?style=for-the-badge&logo=windows" alt="Download tooler.exe">
   </a>

@@ -1140,6 +1140,97 @@ Read-Host "Press Enter to close"
         Start-Process powershell -WindowStyle Minimized -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$tmp`""
     }
 
+    function Enable-HoverWindowActivation {
+        $psCode = @'
+Write-Host "Enabling Window Focus on Mouse Hover (X-Mouse, 100ms delay)..." -ForegroundColor Cyan
+Write-Host "Auto-Raise disabled: Windows will only come to front when clicked." -ForegroundColor Cyan
+try {
+    # 1. Update Registry for persistence across sign-ins
+    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "ActiveWndTrkTimeout" -Value 100 -Type DWord -Force
+    $mask = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -ErrorAction SilentlyContinue).UserPreferencesMask
+    if ($mask) {
+        # Enable Bit 0 (0x01) ActiveWndTracking, Clear Bit 6 (0x40) to keep bring-to-front on click only
+        $mask[0] = [byte](($mask[0] -bor 0x01) -band (-bnot 0x40))
+        Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value $mask -Type Binary -Force
+    }
+
+    # 2. Call Win32 SystemParametersInfo to apply immediately in live session
+    $code = @"
+using System;
+using System.Runtime.InteropServices;
+public class User32Tracking {
+    [DllImport("user32.dll", EntryPoint = "SystemParametersInfoW", SetLastError = true)]
+    public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+}
+"@
+    Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
+
+    $flags = 0x01 -bor 0x02  # SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
+
+    # SPI_SETACTIVEWINDOWTRACKING (0x1001) = 1 (Focus on hover)
+    [User32Tracking]::SystemParametersInfo(0x1001, 0, [IntPtr]1, $flags) | Out-Null
+    # SPI_SETACTIVEWNDTRKTIMEOUT (0x2003) = 100
+    [User32Tracking]::SystemParametersInfo(0x2003, 0, [IntPtr]100, $flags) | Out-Null
+    # SPI_SETACTIVEWNDTRKZORDER (0x100D) = 0 (No auto-raise; bring to front only on click)
+    [User32Tracking]::SystemParametersInfo(0x100D, 0, [IntPtr]0, $flags) | Out-Null
+
+    Write-Host "Window focus on hover enabled successfully (100ms delay)!" -ForegroundColor Green
+    Write-Host "Windows will activate on hover and only bring to front when clicked." -ForegroundColor Green
+    Write-Host "Active in current session immediately and saved to registry." -ForegroundColor Green
+} catch {
+    Write-Host ("Error: " + $_.Exception.Message) -ForegroundColor Red
+}
+Read-Host "Press Enter to close"
+'@
+        $tmp = "$env:TEMP\enable_hover_activation.ps1"
+        $psCode | Out-File -FilePath $tmp -Encoding UTF8
+        Start-Process powershell -WindowStyle Minimized -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$tmp`""
+    }
+
+    function Disable-HoverWindowActivation {
+        $psCode = @'
+Write-Host "Disabling Window Activation on Mouse Hover (restoring Windows defaults)..." -ForegroundColor Cyan
+try {
+    # 1. Update Registry for persistence across sign-ins
+    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "ActiveWndTrkTimeout" -Value 0 -Type DWord -Force
+    $mask = (Get-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -ErrorAction SilentlyContinue).UserPreferencesMask
+    if ($mask) {
+        $mask[0] = [byte]($mask[0] -band (-bnot 0x41))  # Clear Bit 0 and Bit 6
+        Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value $mask -Type Binary -Force
+    }
+
+    # 2. Call Win32 SystemParametersInfo to apply immediately in live session
+    $code = @"
+using System;
+using System.Runtime.InteropServices;
+public class User32Tracking {
+    [DllImport("user32.dll", EntryPoint = "SystemParametersInfoW", SetLastError = true)]
+    public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+}
+"@
+    Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
+
+    $flags = 0x01 -bor 0x02  # SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
+
+    # SPI_SETACTIVEWINDOWTRACKING (0x1001) = 0
+    [User32Tracking]::SystemParametersInfo(0x1001, 0, [IntPtr]0, $flags) | Out-Null
+    # SPI_SETACTIVEWNDTRKTIMEOUT (0x2003) = 0
+    [User32Tracking]::SystemParametersInfo(0x2003, 0, [IntPtr]0, $flags) | Out-Null
+    # SPI_SETACTIVEWNDTRKZORDER (0x100D) = 0
+    [User32Tracking]::SystemParametersInfo(0x100D, 0, [IntPtr]0, $flags) | Out-Null
+
+    Write-Host "Window activation on hover disabled successfully." -ForegroundColor Green
+    Write-Host "Default click-to-activate behavior restored immediately." -ForegroundColor Green
+} catch {
+    Write-Host ("Error: " + $_.Exception.Message) -ForegroundColor Red
+}
+Read-Host "Press Enter to close"
+'@
+        $tmp = "$env:TEMP\disable_hover_activation.ps1"
+        $psCode | Out-File -FilePath $tmp -Encoding UTF8
+        Start-Process powershell -WindowStyle Minimized -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$tmp`""
+    }
+
     # ============================================================
     #  AI in PC
     # ============================================================
@@ -2529,6 +2620,13 @@ Read-Host "Press Enter to close"
             Description = "Run: Remove right-click & flyout menu delay (0ms)  |  Revert: Restore Windows default (400ms)"
             On          = { Set-MenuShowDelay }
             Off         = { Reset-MenuShowDelay }
+        },
+        @{
+            Name        = "Hover Window (X-Mouse)"
+            Category    = "System Tweaks"
+            Description = "Run: Focus window on hover (100ms delay, raise to front on click only)  |  Revert: Restore default click-to-activate"
+            On          = { Enable-HoverWindowActivation }
+            Off         = { Disable-HoverWindowActivation }
         },
         @{
             Name        = "Dark / Light Theme"

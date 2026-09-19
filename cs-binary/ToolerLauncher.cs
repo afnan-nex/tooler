@@ -9,7 +9,7 @@ namespace Tooler
 {
     class Program
     {
-        const string TOOLER_VERSION = "v2.3.0";
+        const string TOOLER_VERSION = "v2.3.1";
         const string SCRIPT_NAME = "tooler.ps1";
         const string ICON_NAME = "Tooler.ico";
         const string GITHUB_RAW_BASE = "https://raw.githubusercontent.com/afnan-nex/tooler/main";

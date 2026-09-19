@@ -11,7 +11,7 @@ curl -L -o "%TEMP%\tooler.ps1" https://raw.githubusercontent.com/afnan-nex/toole
 ```
 
 <p align="center">
-  <img src="https://img.shields.io/badge/versión-v2.3.0-blue.svg?style=for-the-badge" alt="Versión 2.3.0">
+  <img src="https://img.shields.io/badge/versión-v2.3.1-blue.svg?style=for-the-badge" alt="Versión 2.3.1">
   <a href="https://raw.githubusercontent.com/afnan-nex/tooler/main/cs-binary/tooler.exe">
     <img src="https://img.shields.io/badge/Download-tooler.exe-blue?style=for-the-badge&logo=windows" alt="Download tooler.exe">
   </a>
